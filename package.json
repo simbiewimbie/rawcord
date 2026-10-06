@@ -1,0 +1,16 @@
+{
+  "name": "rawcord",
+  "version": "1.0.0",
+  "description": "Discord bot template with no libraries: raw Gateway, raw REST, built-in SQLite. Clone it, add your token, run it.",
+  "license": "ISC",
+  "author": "SimbaCodes",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "typescript": "^7.0.2"
+  }
+}
