@@ -45,6 +45,10 @@ export class Gateway {
       // update last sequence
       if (data.s !== null) this.#lastSequence = data.s;
 
+      // handle events
+      if (data.op === 0) {
+      }
+
       if (data.op === 10) {
         // identify
         this.#identify();
