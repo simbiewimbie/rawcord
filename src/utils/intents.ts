@@ -1,3 +1,5 @@
+// Remove intents by simply commenting them out
+
 const EnabledIntents = {
   Guilds: 1 << 0,
   GuildMembers: 1 << 1, // privileged
