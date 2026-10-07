@@ -2,19 +2,23 @@ import type { GatewayMessage, GatewayResponse } from "./types.ts";
 import type { Rest } from "../rest/client.ts";
 import { API_VERSION } from "../constants.ts";
 import log from "../utils/log.ts";
+import type { TypedEmitter } from "../core/typed-emitter.ts";
+import { skip } from "node:test";
 
 export class Gateway {
   #token: string;
   #intents: number;
-  #heartbeatTimer: ReturnType<typeof setInterval> | undefined;
-  #lastSequence: number | null = null;
   #rest: Rest;
+  #emitter: TypedEmitter;
   #ws: WebSocket | undefined;
+  #lastSequence: number | null = null;
+  #heartbeatTimer: ReturnType<typeof setInterval> | undefined;
 
-  constructor(token: string, intents: number, rest: Rest) {
+  constructor(token: string, intents: number, rest: Rest, emitter: TypedEmitter) {
     this.#token = token;
     this.#intents = intents;
     this.#rest = rest;
+    this.#emitter = emitter;
   }
 
   async connect() {
@@ -26,7 +30,7 @@ export class Gateway {
 
     // Listeners
     this.#ws.addEventListener("open", (event) => {
-      log("info", "[WebSocket] Connection Open.");
+      log("ready", "[WebSocket] Gateway Connection Open.");
     });
 
     this.#ws.addEventListener("error", (event) => {
@@ -40,27 +44,28 @@ export class Gateway {
 
     this.#ws.addEventListener("message", (event) => {
       const data = JSON.parse(event.data) as GatewayMessage;
-      log("info", `[WebSocket] Received Message: Opcode: ${data.op}.`);
+      // log("info", `[WebSocket] Received Message: Opcode: ${data.op}.`);
 
-      // update last sequence
       if (data.s !== null) this.#lastSequence = data.s;
 
-      // handle events
-      if (data.op === 0) {
-      }
+      switch (data.op) {
+        case 0: {
+          if (!data.t) return;
+          this.#emitter.emit(data.t, data.d);
+          break;
+        }
 
-      if (data.op === 10) {
-        // identify
-        this.#identify();
-
-        // handle Hello
-        const interval = (data.d as { heartbeat_interval: number }).heartbeat_interval;
-        this.#heartbeatTimer = setTimeout(() => {
-          this.#heartbeat();
-          this.#heartbeatTimer = setInterval(() => {
+        case 10: {
+          this.#identify();
+          const interval = (data.d as { heartbeat_interval: number }).heartbeat_interval;
+          this.#heartbeatTimer = setTimeout(() => {
             this.#heartbeat();
-          }, interval);
-        }, interval * Math.random());
+            this.#heartbeatTimer = setInterval(() => {
+              this.#heartbeat();
+            }, interval);
+          }, interval * Math.random());
+          break;
+        }
       }
     });
   }
