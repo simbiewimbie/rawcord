@@ -45,12 +45,10 @@ export class Gateway {
       // update last sequence
       if (data.s !== null) this.#lastSequence = data.s;
 
-      // identify
-      if (data.op === 2) {
-        this.#identify();
-      }
-
       if (data.op === 10) {
+        // identify
+        this.#identify();
+
         // handle Hello
         const interval = (data.d as { heartbeat_interval: number }).heartbeat_interval;
         this.#heartbeatTimer = setTimeout(() => {
