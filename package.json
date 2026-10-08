@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "@types/node": "^26.6.4",
+    "discord-api-types": "^0.38.56",
     "typescript": "^7.0.2"
   }
 }
