@@ -1,4 +1,4 @@
-import type { GatewayMessage, GatewayResponse } from "./types.ts";
+import type { GatewayMessage, GatewayResponse } from "../types/types.ts";
 import type { Rest } from "../rest/client.ts";
 import { API_VERSION } from "../constants.ts";
 import log from "../utils/log.ts";
