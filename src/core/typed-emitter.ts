@@ -39,12 +39,12 @@ export class TypedEmitter {
 
     for (let handler of eventHandlers) {
       try {
-        let result = handler(data);
+        const result = handler(data);
         if (result instanceof Promise) {
           result.catch((error) => log("error", `An error occured for a '${event}' event handler: ${error}`));
         }
       } catch (error) {
-        log("error", `An error occured for a '${event}' event handler`);
+        log("error", `An error occured for a '${event}' event handler: ${error}`);
       }
     }
   }
