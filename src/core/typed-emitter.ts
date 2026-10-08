@@ -1,4 +1,6 @@
-type Handler = (data: unknown) => void;
+import log from "../utils/log.ts";
+
+type Handler = (data: unknown) => void | Promise<void>;
 
 export class TypedEmitter {
   #handlers = new Map<string, Set<Handler>>();
@@ -36,7 +38,14 @@ export class TypedEmitter {
     if (!eventHandlers) return;
 
     for (let handler of eventHandlers) {
-      handler(data);
+      try {
+        let result = handler(data);
+        if (result instanceof Promise) {
+          result.catch((error) => log("error", `An error occured for a '${event}' event handler: ${error}`));
+        }
+      } catch (error) {
+        log("error", `An error occured for a '${event}' event handler`);
+      }
     }
   }
 }
