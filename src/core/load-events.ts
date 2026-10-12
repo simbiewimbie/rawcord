@@ -17,7 +17,7 @@ export async function loadEvents(emitter: TypedEmitter, dir: string): Promise<vo
 
     const mod = await import(pathToFileURL(fullPath).href);
     if (!mod.default) {
-      log("error", `[Loader] Default export missing: "${fullPath}"`);
+      log("error", `[LOADER] Default export missing: "${fullPath}"`);
       continue;
     }
 
@@ -30,10 +30,11 @@ export async function loadEvents(emitter: TypedEmitter, dir: string): Promise<vo
     }
 
     if (!EVENT_NAMES.includes(name)) {
-      log("error", `[Loader] Event name "${name}" is not a valid event name.`);
+      log("error", `[LOADER] Event name "${name}" is not a valid event name.`);
       continue;
     }
 
+    log("debug", `[LOADER] Loaded event: "${name}"`);
     emitter.on(name as keyof GatewayEvents, handler);
   }
 }
