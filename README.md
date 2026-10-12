@@ -71,7 +71,7 @@ Only `GET` is implemented so far. `POST`, `PATCH` and `DELETE` are already typed
 
 ## Events
 
-Each file in `src/events/` handles one Gateway event. The file name is the event name, so `messageCreate.ts` (or `message-create.ts`) handles `MESSAGE_CREATE`. Files in subfolders are picked up too. The name must be in `EVENT_NAMES` ([src/gateway/events.ts](src/gateway/events.ts)), or the loader logs an error and skips the file.
+Each file in `src/events/` handles one Gateway event. Files in subfolders are picked up too. The event name comes from `defineEvent()`, so the file name doesn't matter. A file whose default export is a plain function uses its file name instead: `messageCreate.ts` (or `message-create.ts`) handles `MESSAGE_CREATE`. The name must be in `EVENT_NAMES` ([src/gateway/events.ts](src/gateway/events.ts)), or the loader logs an error and skips the file.
 
 ```ts
 // src/events/messageCreate.ts
@@ -86,7 +86,7 @@ The handler's `data` is typed from the `GatewayEvents` map in [src/types/types.t
 
 ## Status
 
-Early template. Connects to the Gateway, heartbeats, identifies, and dispatches events (`op 0`) to the handlers in `src/events/`. `READY` and `MESSAGE_CREATE` are stubs. SQLite is not wired up yet.
+Early template. Connects to the Gateway, heartbeats, identifies, and dispatches events (`op 0`) to the handlers in `src/events/`. `READY` logs that the client is ready, and `MESSAGE_CREATE` is an empty stub. SQLite is not wired up yet.
 
 ## License
 
