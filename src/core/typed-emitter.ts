@@ -1,30 +1,32 @@
+import type { GatewayEvents } from "../types/types.ts";
 import log from "../utils/log.ts";
 
-type Handler = (data: unknown) => void | Promise<void>;
+type Handler<T extends keyof GatewayEvents> = (data: GatewayEvents[T]) => void | Promise<void>;
+type AnyHandler = Handler<keyof GatewayEvents>;
 
 export class TypedEmitter {
-  #handlers = new Map<string, Set<Handler>>();
+  #handlers = new Map<string, Set<AnyHandler>>();
 
   // registering a handler for an event
-  public on(event: string, handler: Handler): void {
+  public on<T extends keyof GatewayEvents>(event: T, handler: Handler<T>) {
     let eventHandlers = this.#handlers.get(event);
 
     if (!eventHandlers) {
-      eventHandlers = new Set<Handler>();
+      eventHandlers = new Set<AnyHandler>();
       this.#handlers.set(event, eventHandlers);
     }
 
-    eventHandlers.add(handler);
+    eventHandlers.add(handler as AnyHandler);
   }
 
-  public off(event: string, handler: Handler): void {
+  public off(event: string, handler: AnyHandler): void {
     const eventHandlers = this.#handlers.get(event);
     if (!eventHandlers) return;
     eventHandlers.delete(handler);
   }
 
-  public once(event: string, handler: Handler): void {
-    const wrapper: Handler = (data) => {
+  public once<T extends keyof GatewayEvents>(event: T, handler: AnyHandler): void {
+    const wrapper: AnyHandler = (data) => {
       this.off(event, wrapper);
       handler(data);
     };
@@ -32,7 +34,7 @@ export class TypedEmitter {
   }
 
   // announcing the occurrence of an event
-  public emit(event: string, data: unknown): void {
+  public emit<T extends keyof GatewayEvents>(event: T, data: GatewayEvents[T]): void {
     const eventHandlers = this.#handlers.get(event);
 
     if (!eventHandlers) return;
