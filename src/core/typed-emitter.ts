@@ -25,9 +25,9 @@ export class TypedEmitter {
     eventHandlers.delete(handler);
   }
 
-  public once<T extends keyof GatewayEvents>(event: T, handler: AnyHandler): void {
-    const wrapper: AnyHandler = (data) => {
-      this.off(event, wrapper);
+  public once<T extends keyof GatewayEvents>(event: T, handler: Handler<T>): void {
+    const wrapper: Handler<T> = (data) => {
+      this.off(event, wrapper as AnyHandler);
       handler(data);
     };
     this.on(event, wrapper);
