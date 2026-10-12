@@ -43,10 +43,10 @@ export class TypedEmitter {
       try {
         const result = handler(data);
         if (result instanceof Promise) {
-          result.catch((error) => log("error", `An error occured for a '${event}' event handler: ${error}`));
+          result.catch((error) => log("error", `An error occured on '${event}'. Handler: ${error}`));
         }
       } catch (error) {
-        log("error", `An error occured for a '${event}' event handler: ${error}`);
+        log("error", `An error occured on '${event}'. Error: ${error}`);
       }
     }
   }
