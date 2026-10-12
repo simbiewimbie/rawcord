@@ -1,7 +1,7 @@
 import type { GatewayEvents } from "../types/types.ts";
 import log from "../utils/log.ts";
 
-type Handler<T extends keyof GatewayEvents> = (data: GatewayEvents[T]) => void | Promise<void>;
+export type Handler<T extends keyof GatewayEvents> = (data: GatewayEvents[T]) => void | Promise<void>;
 type AnyHandler = Handler<keyof GatewayEvents>;
 
 export class TypedEmitter {
