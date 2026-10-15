@@ -1,4 +1,8 @@
-import type { GatewayMessageCreateDispatchData, GatewayReadyDispatchData } from "discord-api-types/v10";
+import type {
+  GatewayInteractionCreateDispatchData,
+  GatewayMessageCreateDispatchData,
+  GatewayReadyDispatchData,
+} from "discord-api-types/v10";
 import type { Handler } from "../core/typed-emitter.ts";
 
 export interface GatewayResponse {
@@ -15,6 +19,7 @@ export interface GatewayMessage {
 export interface GatewayEvents {
   READY: GatewayReadyDispatchData;
   MESSAGE_CREATE: GatewayMessageCreateDispatchData;
+  INTERACTION_CREATE: GatewayInteractionCreateDispatchData;
 }
 
 export interface EventDefinition<T extends keyof GatewayEvents> {
