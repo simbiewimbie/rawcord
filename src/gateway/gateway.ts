@@ -1,9 +1,8 @@
-import type { GatewayMessage, GatewayResponse } from "../types/types.ts";
+import type { GatewayEvents, GatewayMessage, GatewayResponse } from "../types/types.ts";
+import type { TypedEmitter } from "../core/typed-emitter.ts";
 import type { Rest } from "../rest/client.ts";
 import { API_VERSION } from "../constants.ts";
 import log from "../utils/log.ts";
-import type { TypedEmitter } from "../core/typed-emitter.ts";
-import { skip } from "node:test";
 
 export class Gateway {
   #token: string;
@@ -51,7 +50,7 @@ export class Gateway {
       switch (data.op) {
         case 0: {
           if (!data.t) return;
-          this.#emitter.emit(data.t, data.d);
+          this.#emitter.emit(data.t as keyof GatewayEvents, data.d as GatewayEvents[keyof GatewayEvents]);
           break;
         }
 
