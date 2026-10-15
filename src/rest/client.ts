@@ -11,6 +11,14 @@ export class Rest {
     return this.#request<T>("GET", path);
   }
 
+  put<T>(path: string, body: unknown): Promise<T> {
+    return this.#request<T>("PUT", path, body);
+  }
+
+  post<T>(path: string, body: unknown): Promise<T> {
+    return this.#request<T>("POST", path, body);
+  }
+
   async #request<T>(method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE", path: string, body?: unknown): Promise<T> {
     const res = await fetch(`${DISCORD_API_BASE}${path}`, {
       method,
