@@ -17,7 +17,7 @@ export async function loadEvents(emitter: TypedEmitter, dir: string): Promise<vo
 
     const mod = await import(pathToFileURL(fullPath).href);
     if (!mod.default) {
-      log("error", `[LOADER] Default export missing: "${fullPath}"`);
+      log("error", `[LOADER] [EVENT] Default export missing: "${fullPath}"`);
       continue;
     }
 
