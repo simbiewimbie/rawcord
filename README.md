@@ -1,4 +1,4 @@
-<p align="center"><img src="logo.png" alt="rawcord" width="160"></p>
+<p align="center"><img src="assets/banner.svg" alt="rawcord: a zero-dependency Discord bot, built on the raw API" width="100%"></p>
 
 # rawcord
 
@@ -7,7 +7,7 @@ A Discord bot template with **no Discord libraries**: raw Gateway (WebSocket), r
 ## Requirements
 
 - Node.js with native TypeScript support and `--env-file` (Node 24+ recommended)
-- A bot token from the [Discord Developer Portal](https://discord.com/developers/applications)
+- A bot token and application ID from the [Discord Developer Portal](https://discord.com/developers/applications)
 
 ## Setup
 
@@ -23,6 +23,8 @@ npm run dev
 
 ```
 BOT_TOKEN="your-bot-token"
+APPLICATION_ID="your-application-id"
+GUILD_ID=""   # optional: register commands to one guild (instant) instead of globally
 ```
 
 ## Scripts
@@ -35,24 +37,33 @@ BOT_TOKEN="your-bot-token"
 
 ```
 src/
-├── index.ts              # Entry point: creates Rest, TypedEmitter and Gateway, loads events, connects
-├── config.ts             # Loads and validates BOT_TOKEN
+├── index.ts              # Entry point: loads events and commands, registers commands, connects
+├── config.ts             # Loads and validates BOT_TOKEN, APPLICATION_ID, optional GUILD_ID
 ├── constants.ts          # Discord API version and base URL (v10)
+├── commands/
+│   ├── ping.ts           # /ping: replies "pong!"
+│   └── status.ts         # /status: bot info card (Components V2)
 ├── core/
 │   ├── typed-emitter.ts  # Typed on / once / off / emit for gateway events
 │   ├── define-event.ts   # defineEvent() helper for event files
-│   └── load-events.ts    # Imports every file in src/events/ and registers it
+│   ├── load-events.ts    # Imports every file in src/events/ and registers it
+│   ├── define-command.ts # defineCommand() helper for command files
+│   ├── load-command.ts   # Imports every file in src/commands/ into the commands map
+│   └── register-commands.ts # Syncs the commands map with Discord (only if changed)
 ├── events/
-│   ├── ready.ts          # READY handler (empty stub)
-│   └── messageCreate.ts  # MESSAGE_CREATE handler (empty stub)
+│   ├── ready.ts            # READY handler (logs the client is ready)
+│   ├── interactionCreate.ts # Routes slash commands to src/commands/
+│   └── messageCreate.ts    # MESSAGE_CREATE handler (empty stub)
 ├── gateway/
 │   ├── gateway.ts        # WebSocket connection, heartbeat, identify, dispatch (op 0)
 │   └── events.ts         # EVENT_NAMES: every valid gateway event name
 ├── rest/
-│   └── client.ts         # Minimal REST client (fetch + bot auth)
+│   ├── client.ts         # Minimal REST client (fetch + bot auth)
+│   └── instance.ts       # Shared Rest instance
 ├── types/
-│   └── types.ts          # Gateway payload types and the GatewayEvents map
+│   └── types.ts          # Gateway payload types, GatewayEvents map, Command
 └── utils/
+    ├── format.ts         # formatUptime()
     ├── intents.ts        # Gateway intents
     └── log.ts            # Logger
 ```
@@ -67,7 +78,7 @@ All intents are enabled by default in [src/utils/intents.ts](src/utils/intents.t
 const me = await rest.get<{ username: string }>("/users/@me");
 ```
 
-Only `GET` is implemented so far. `POST`, `PATCH` and `DELETE` are already typed in `#request`, so add a public method per verb as you need them.
+`get`, `post` and `put` are implemented. `PATCH` and `DELETE` are already typed in `#request`, so add a public method per verb as you need them.
 
 ## Events
 
@@ -84,9 +95,32 @@ export default defineEvent("MESSAGE_CREATE", (message) => {
 
 The handler's `data` is typed from the `GatewayEvents` map in [src/types/types.ts](src/types/types.ts). To type a new event, add it to that map.
 
+## Commands
+
+Each file in `src/commands/` is one slash command (subfolders work too). Export a `defineCommand()` and the loader picks it up. Command names must be unique; duplicates are logged and skipped.
+
+```ts
+// src/commands/ping.ts
+import { defineCommand } from "../core/define-command.ts";
+import { rest } from "../rest/instance.ts";
+
+export default defineCommand({
+  name: "ping",
+  description: "Replies to pong",
+  execute: async (interaction) => {
+    await rest.post<void>(`/interactions/${interaction.id}/${interaction.token}/callback`, {
+      type: 4,
+      data: { content: "pong!" },
+    });
+  },
+});
+```
+
+On startup, `registerCommands()` compares your commands (name and description) with what Discord has and only sends a `PUT` when they differ. Set `GUILD_ID` for instant guild-scoped updates while developing; leave it empty to register globally (can take a while to propagate). Options are not supported yet.
+
 ## Status
 
-Early template. Connects to the Gateway, heartbeats, identifies, and dispatches events (`op 0`) to the handlers in `src/events/`. `READY` logs that the client is ready, and `MESSAGE_CREATE` is an empty stub. SQLite is not wired up yet.
+Early template. Connects to the Gateway, heartbeats, identifies, and dispatches events (`op 0`). Slash commands (`/ping`, `/status`) are loaded, registered and routed via `INTERACTION_CREATE`. `MESSAGE_CREATE` is an empty stub. SQLite is not wired up yet. The `/status` card currently shows placeholder values.
 
 ## License
 

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="320" viewBox="0 0 1280 320">
+  <rect width="1280" height="320" rx="24" fill="#1d1d1b"/>
+  <g transform="translate(80 60) scale(0.2)">
+    <path fill="#d5803f" d="M221 262h165v68H290v364h96v68H221zM802 262H638v68h96v364h-96v68h164z"/>
+    <path fill="#ebe6dd" d="M420 692V490q0-146 150-146h38v72h-36q-80 0-80 76v200z"/>
+  </g>
+  <text x="340" y="160" font-family="'SF Mono',Consolas,monospace" font-size="84" font-weight="700" fill="#ebe6dd">rawcord</text>
+  <text x="344" y="215" font-family="'SF Mono',Consolas,monospace" font-size="28" fill="#d5803f">A zero-dependency Discord bot, built on the raw API</text>
+</svg>
