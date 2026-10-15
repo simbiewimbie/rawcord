@@ -12,5 +12,5 @@ const emitter = new TypedEmitter();
 const gateway = new Gateway(BOT_TOKEN, intents, rest, emitter);
 await loadEvents(emitter, join(import.meta.dirname, "events"));
 await loadCommands(join(import.meta.dirname, "commands"));
-// await registerCommands(rest);
+await registerCommands(rest);
 await gateway.connect();
