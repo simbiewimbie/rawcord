@@ -1,12 +1,16 @@
-export const BOT_TOKEN = validateToken(process.env.BOT_TOKEN);
+export const BOT_TOKEN = requireEnv("BOT_TOKEN");
+export const APPLICATION_ID = requireEnv("APPLICATION_ID");
+export const GUILD_ID = optionalEnv("GUILD_ID");
 
-// Validate Token
-function validateToken(token: string | undefined): string {
-  if (token === undefined) {
-    throw new Error("Token is undefined. Define `BOT_TOKEN` in .env");
+function optionalEnv(variable: string): string | undefined {
+  return process.env[variable]?.trim() || undefined;
+}
+
+function requireEnv(variable: string): string {
+  let env = process.env[variable]?.trim();
+  if (!env) {
+    throw new Error(`${variable.toUpperCase()} is undefined. Define '${variable.toUpperCase()}' in .env`);
+  } else {
+    return env.trim();
   }
-  if (token.trim().length === 0) {
-    throw new Error("Invalid token defined. Redefine `BOT_TOKEN` in .env");
-  }
-  return token.trim();
 }
