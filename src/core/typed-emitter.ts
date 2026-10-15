@@ -35,6 +35,7 @@ export class TypedEmitter {
 
   // announcing the occurrence of an event
   public emit<T extends keyof GatewayEvents>(event: T, data: GatewayEvents[T]): void {
+    log("debug", `[EMITTER] Received Event: '${event}'`);
     const eventHandlers = this.#handlers.get(event);
 
     if (!eventHandlers) return;
