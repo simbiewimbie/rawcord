@@ -2,6 +2,7 @@ import type {
   GatewayInteractionCreateDispatchData,
   GatewayMessageCreateDispatchData,
   GatewayReadyDispatchData,
+  GatewayThreadCreateDispatchData,
 } from "discord-api-types/v10";
 import type { Handler } from "../core/typed-emitter.ts";
 
@@ -25,4 +26,10 @@ export interface GatewayEvents {
 export interface EventDefinition<T extends keyof GatewayEvents> {
   name: T;
   handler: Handler<T>;
+}
+
+export interface Command {
+  name: string;
+  description: string;
+  execute: (interaction: GatewayInteractionCreateDispatchData) => void | Promise<void>;
 }
