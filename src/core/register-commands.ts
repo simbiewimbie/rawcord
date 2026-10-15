@@ -24,7 +24,7 @@ export async function registerCommands(rest: Rest): Promise<void> {
 
   if (changed) {
     await rest.put(path, commandList);
-    log("info", `[REGISTRAR] ${commandList.length} commands registered!`);
+    log("info", `[REGISTRAR] ${commandList.length} command${commandList.length > 1 ? "s" : ""} registered!`);
   } else {
     log("info", `[REGISTRAR] No new commands were registered.`);
   }
