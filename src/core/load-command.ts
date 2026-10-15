@@ -21,6 +21,7 @@ export async function loadCommands(dir: string): Promise<void> {
     const command = mod.default;
     if (commands.get(command.name)) {
       log("error", `[LOADER] Found duplicate command: "${command.name}". Path: "${fullPath}" `);
+      continue;
     }
     commands.set(command.name, command);
 
